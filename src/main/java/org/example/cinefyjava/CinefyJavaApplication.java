@@ -8,6 +8,7 @@ public class CinefyJavaApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(CinefyJavaApplication.class, args);
+        System.out.println("HEY");
     }
-
 }
+
