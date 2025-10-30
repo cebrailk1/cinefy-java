@@ -1,32 +1,35 @@
 package org.example.cinefyjava;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Repräsentiert einen Kinosaal mit seinen Kapazitätsdetails.
- * Entspricht der SAAL-Tabelle im ER-Diagramm.
+ * Entspricht der Tabelle {@code saal} im Datenbankschema.
  */
 @Entity
 @Table(name = "saal")
 @Getter
 @Setter
-@NoArgsConstructor // Lombok generiert einen Konstruktor ohne Argumente
+@NoArgsConstructor
 public class Saal {
 
     /**
-     * Die ID des Saals (PK). Wir verwenden GenerationType.IDENTITY, da die ID
-     * vom Benutzer (Saal 1, 2, 3) zugewiesen werden kann, aber in der DB auto-generiert wird.
+     * Primärschlüssel des Saals.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "saal_id")
+    @Column(name = "id")
     private Integer id;
 
     /**
-     * Der Name des Saals (z.B. "Saal 1").
+     * Der Name des Saals (z. B. "Saal 1").
      */
     @Column(name = "name", nullable = false)
     private String name;
@@ -34,8 +37,8 @@ public class Saal {
     /**
      * Gesamtzahl der Reihen im Saal.
      */
-    @Column(name = "anzahl_reihen", nullable = false)
-    private Integer anzahlReihen;
+    @Column(name = "reihen", nullable = false)
+    private Integer reihen;
 
     /**
      * Anzahl der Sitze pro Reihe.
@@ -43,10 +46,17 @@ public class Saal {
     @Column(name = "sitze_pro_reihe", nullable = false)
     private Integer sitzeProReihe;
 
-    // Konstruktor für die Initialisierung der Daten
-    public Saal(String name, Integer anzahlReihen, Integer sitzeProReihe) {
+    @OneToMany(mappedBy = "saal", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Sitzplatz> sitzplaetze = new ArrayList<>();
+
+    @OneToMany(mappedBy = "saal")
+    @JsonIgnore
+    private List<Vorfuehrung> vorfuehrungen = new ArrayList<>();
+
+    public Saal(String name, Integer reihen, Integer sitzeProReihe) {
         this.name = name;
-        this.anzahlReihen = anzahlReihen;
+        this.reihen = reihen;
         this.sitzeProReihe = sitzeProReihe;
     }
 }
